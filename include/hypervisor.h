@@ -12,5 +12,7 @@ extern void uart_puts(char *s);
 extern int printf(const char *s, ...);
 extern void panic(char *s);
 
+extern void *page_alloc(int npages);
+extern void page_free(void *p);
 #define concat(a, b) a ## b
 #endif

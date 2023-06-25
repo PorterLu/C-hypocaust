@@ -2,6 +2,8 @@
 #include "sbi.h"
 #include "detect.h"
 
+extern void page_init(void);
+
 int main(void) {
   sbiret r = SBI_CALL(BASE_EXTENSION, PROBE_EXTENSION, HSM_EXTENSION, 0, 0);
   if(r.value == 1) 
@@ -15,6 +17,8 @@ int main(void) {
   else 
     panic("H extension unsupported");
 
+  page_init();
+  
   panic("over");
 
   return 0;
