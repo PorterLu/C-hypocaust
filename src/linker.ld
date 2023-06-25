@@ -1,11 +1,6 @@
 OUTPUT_ARCH(riscv)
 ENTRY(_start)
 
-MEMORY
-{
-  ram (wxa!ri) : ORIGIN = 0x80000000, LENGTH = 512M
-}
-
 BASE_ADDRESS = 0x80200000;
 
 SECTIONS
@@ -13,54 +8,54 @@ SECTIONS
   . = BASE_ADDRESS;
   skernel = .;
 
-  stext = .;
+  _stext = .;
   .text : {
     . = ALIGN(4K);
     *(.text .text.*)
-  } > ram
+  }
 
   . = ALIGN(4K);
-  etext = .;
-  srodata = .;
+  _etext = .;
+  _srodata = .;
   .rodata : {
     *(.rodata .rodata.*)
     *(.srodata .srodata.*)
-  } > ram
+  }
 
   . = ALIGN(4K);
-  erodata = .;
-  sdata = .;
+  _erodata = .;
+  _sdata = .;
   .data : {
     *(.data .data.*)
     *(.sdata .sdata.*)
-  } > ram
+  }
 
   . = ALIGN(4K);
-  sbss = .;
+  _sbss = .;
   .bss : {
     *(.bss .bss.*)
     *(.sbss .sbss.*)
-  } > ram
+  }
 
   . = ALIGN(4K);
-  ebss = .;
-  ekernel = .;
+  _ebss = .;
+  _ekernel = .;
 
   . = 0x90000000;
   .dtb : {
     *(.dtb)
-  } > ram
+  } 
 
   . = 0x90200000;
   .initrd : {
     *(.initrd)
-  } > ram
+  }
 
   /DISCARD/ : {
     *(.eh_frame)
-  } > ram
+  }
 
-  memory_end = .;
-  heap_start = .;
-  heap_size = 2*ORIGIN(ram) + LENGTH(ram) - heap_start - BASE_ADDRESS;
+  _memory_end = .;
+  _heap_start = .;
+  _heap_size = 0x80000000 + 512*1024*1024 - _heap_start - 0x200000;
 }
