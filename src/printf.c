@@ -137,6 +137,6 @@ void panic(char *s)
 	printf("panic: ");
 	printf(s);
 	printf("\n");
-	SBI_CALL(0x08, 0, 0, 0, 0);
+	SBI_CALL(SHUT_DOWN, 0, 0, 0, 0);
 }
 

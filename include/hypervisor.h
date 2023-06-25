@@ -12,4 +12,5 @@ extern void uart_puts(char *s);
 extern int printf(const char *s, ...);
 extern void panic(char *s);
 
+#define concat(a, b) a ## b
 #endif

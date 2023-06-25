@@ -3,6 +3,13 @@
 
 #include "types.h"
 
+#define SHUT_DOWN 0x08
+#define HSM_EXTENSION 0x48534D
+#define BASE_EXTENSION 0x10
+
+// function id
+#define PROBE_EXTENSION 0x3
+
 typedef struct sbiret {
   long error;
   long value;
