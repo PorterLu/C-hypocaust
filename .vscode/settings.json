@@ -3,5 +3,6 @@
     "reg.h": "c",
     "types.h": "c",
     "detect.h": "c"
-  }
+  },
+  "C_Cpp.errorSquiggles": "disabled"
 }

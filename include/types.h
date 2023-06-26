@@ -67,4 +67,9 @@ typedef size_t ppn_t;
 #define to_struct(ptr, type, member)                               \
     ((type *)((char *)(ptr) - offsetof(type, member)))
 
+
+typedef uint64_t pte_t;
+typedef uint64_t *pagetable_t; // 512 PTEs
+typedef uint64_t pde_t;
+
 #endif
