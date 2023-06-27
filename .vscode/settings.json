@@ -2,7 +2,8 @@
   "files.associations": {
     "reg.h": "c",
     "types.h": "c",
-    "detect.h": "c"
+    "detect.h": "c",
+    "vm.h": "c"
   },
   "C_Cpp.errorSquiggles": "disabled"
 }

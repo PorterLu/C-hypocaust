@@ -14,5 +14,9 @@ extern void panic(char *s);
 
 extern void *page_alloc(int npages);
 extern void page_free(void *p);
+
+void init_hypervisor();
+
 #define concat(a, b) a ## b
+
 #endif

@@ -31,6 +31,8 @@
 // MAXVA is actually one bit less than the max allowed by
 // Sv39, to avoid having to sign-extend virtual addresses
 // that have the high bit set.
-#define MAXVA (1L << (9 + 9 + 9 + 12 - 1))
+#define LOW_MAXVA (1L << (9 + 9 + 9 + 12 - 1))
+#define HIGH_MINVA (-LOW_MAXVA)
+#define TRAMPOLINE ((uint64_t)0 - PGSIZE)
 
 #endif

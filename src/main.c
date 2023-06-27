@@ -3,6 +3,7 @@
 #include "detect.h"
 
 extern void page_init(void);
+#include "vm.h"
 
 int main(void) {
   sbiret r = SBI_CALL(BASE_EXTENSION, PROBE_EXTENSION, HSM_EXTENSION, 0, 0);
@@ -18,6 +19,8 @@ int main(void) {
     panic("H extension unsupported");
 
   page_init();
+
+  init_hypervisor();
   
   panic("over");
 
