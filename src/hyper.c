@@ -1,6 +1,7 @@
 #include "hypervisor.h"
 #include "reg.h"
 #include "vm.h"
+#include "sbi.h"
 
 #define HEDELEG 0x602
 #define HIDELEG 0x601
@@ -65,6 +66,10 @@ void clear_hvip_all() {
   write_csr("hvip", read_csr("hvip") & (~(1 << 10)));
 }
 
+void trap_test() {
+  SBI_CALL(SHUT_DOWN, 0, 0, 0, 0);
+}
+
 void init_hypervisor() {
   set_hinst_misaligned();
   set_hbreak();
@@ -77,5 +82,5 @@ void init_hypervisor() {
   clear_htime_int();
   clear_hvip_all();
 
-  write_csr("stvec", TRAMPOLINE & 0xc0);
+  write_csr("stvec", (uint64_t) trap_test & 0xc0);
 }

@@ -4,14 +4,16 @@ extern uint64_t TEXT_START;
 extern uint64_t TEXT_END;
 extern uint64_t RODATA_START;
 extern uint64_t RODATA_END;
+extern uint64_t DATA_START;
+extern uint64_t DATA_END;
 extern uint64_t BSS_START;
 extern uint64_t BSS_END;
 extern uint64_t HEAP_START;
 extern uint64_t HEAP_SIZE;
 
-static uint64_t _alloc_start = 0;
-static uint64_t _alloc_end = 0;
-static uint64_t _num_pages = 0;
+uint64_t _alloc_start = 0;
+uint64_t _alloc_end = 0;
+uint64_t _num_pages = 0;
 
 #define PAGE_SIZE 4096
 #define PAGE_ORDER 12
@@ -65,10 +67,11 @@ void page_init(){												//初始化，计算剩余的存储空间，够分�
 	_alloc_start = _align_page(HEAP_START + 8 * PAGE_SIZE);		//实际使用的页的起始地址
 	_alloc_end = _alloc_start + (PAGE_SIZE * _num_pages);		//实际使用的页的结束地址
 
-	printf("TEXT:	0x%x -> 0x%x\n", TEXT_START, TEXT_END);		
+	printf("TEXT:   0x%x -> 0x%x\n", TEXT_START, TEXT_END);		
 	printf("RODATA: 0x%x -> 0x%x\n", RODATA_START, RODATA_END);
-	printf("BSS:	0x%x -> 0x%x\n", BSS_START, BSS_END);
-	printf("HEAP:	0x%x -> 0x%x\n", _alloc_start, _alloc_end);
+  printf("DATA:   0x%x -> 0x%x\n", DATA_START, DATA_END);
+	printf("BSS:    0x%x -> 0x%x\n", BSS_START, BSS_END);
+	printf("HEAP:   0x%x -> 0x%x\n", _alloc_start, _alloc_end);
 }
 
 void *page_alloc(int npages){									//分配n个pages

@@ -31,6 +31,7 @@ SECTIONS
   }
 
   . = ALIGN(4K);
+  _edata = .;
   _sbss = .;
   .bss : {
     *(.bss .bss.*)

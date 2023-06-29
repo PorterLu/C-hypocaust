@@ -1,6 +1,6 @@
 #include "platform.h"
 
-  .equ STACK_SIZE, 1024
+  .equ STACK_SIZE, 4096
   .global _start
 
   .text
@@ -10,5 +10,5 @@ _start:
 
 .align 3
 stacks:
-  .skip STACK_SIZE
+  .skip STACK_SIZE 
   .end

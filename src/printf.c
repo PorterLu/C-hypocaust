@@ -108,7 +108,7 @@ static int _vsnprintf(char * out, size_t n, const char* s, va_list vl)
 	return pos;
 }
 
-static char out_buf[1000]; // buffer for _vprintf()
+static char out_buf[8096]; // buffer for _vprintf()
 
 static int _vprintf(const char* s, va_list vl)
 {

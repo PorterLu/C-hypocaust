@@ -17,6 +17,12 @@ RODATA_START: .dword _srodata
 .global RODATA_END
 RODATA_END: .dword _erodata
 
+.global DATA_START
+DATA_START: .dword _sdata 
+
+.global DATA_END
+DATA_END: .dword _edata 
+
 .global BSS_START
 BSS_START: .dword _sbss
 

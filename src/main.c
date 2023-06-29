@@ -21,7 +21,11 @@ int main(void) {
   page_init();
 
   init_hypervisor();
-  
+
+  enable_paging();
+
+  printf("Welcome to hypervisor!\n");
+
   panic("over");
 
   return 0;

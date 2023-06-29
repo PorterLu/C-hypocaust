@@ -3,3 +3,5 @@ KuangjuX's hypervisor projects are eye-opening for me. So I am trying to practic
 
 ## Refer
 1. https://github.com/KuangjuX/hypocaust-2
+2. https://github.com/mit-pdos/xv6-riscv
+3. https://github.com/plctlab/riscv-operating-system-mooc
