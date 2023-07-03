@@ -18,9 +18,13 @@
 #define SSTATUS_SPP (1 << 8)
 #define SSTATUS_SPIE (1 << 5)
 #define SSTATUS_SIE (1 << 1)
+#define SIE_STIE (1 << 5)
 
 #define TRAP_MODE_DIRECT 0
 #define TRAP_MODE_VECTOR 1
+
+#define HSTATUS_SPV (1 << 7)
+#define HSTATUS_SPVP (1 << 8)
 
 struct context {
   reg_t zero;

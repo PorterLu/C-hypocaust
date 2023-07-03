@@ -1,9 +1,10 @@
 {
   "files.associations": {
-    "reg.h": "c",
-    "types.h": "c",
-    "detect.h": "c",
-    "vm.h": "c"
-  },
+	"reg.h": "c",
+	"types.h": "c",
+	"detect.h": "c",
+	"vm.h": "c",
+	"compare": "c"
+},
   "C_Cpp.errorSquiggles": "disabled"
 }

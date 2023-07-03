@@ -140,3 +140,6 @@ void panic(char *s)
 	SBI_CALL(SHUT_DOWN, 0, 0, 0, 0);
 }
 
+void unreachable() {
+	panic("unreachable!");
+}
