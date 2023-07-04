@@ -3,7 +3,7 @@
   .equ STACK_SIZE, 4096
   .global _start
 
-  .text
+  .section .text.entry
 _start:
   la    sp, stacks  + STACK_SIZE
   j main
