@@ -4,11 +4,11 @@
 #include "reg.h"
 
 void enable_stimer_interrupt() {
-	write_csr("sie", read_csr("sie") | SIE_STIE);
+  write_csr("sie", read_csr("sie") | SIE_STIE);
 }
 
 void disable_stimer_interrupt() {
-	write_csr("sie", read_csr("sie") & ~SIE_STIE);
+  write_csr("sie", read_csr("sie") & ~SIE_STIE);
 }
 
 #endif

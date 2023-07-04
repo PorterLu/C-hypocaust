@@ -1,6 +1,7 @@
 #include "hypervisor.h"
 #include "sbi.h"
 #include "detect.h"
+#include "malloc.h"
 
 extern void page_init(void);
 #include "vm.h"
@@ -23,6 +24,9 @@ int main(void) {
   init_hypervisor();
 
   enable_paging();
+
+  heap_init();
+  //heap_test();
 
   printf("Welcome to hypervisor!\n");
 

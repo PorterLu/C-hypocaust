@@ -5,7 +5,7 @@ BOOTLOADER := bootloader/opensbi-qemu.bin
 KERNEL_ENTRY_PA	:= 0x80200000
 
 QEMUOPTS	= -M virt -m 512M -bios $(BOOTLOADER) -nographic -smp $(CPUS)
-QEMUOPTS 	+= -device loader,file=./$(TARGET_BIN),addr=$(KERNEL_ENTRY_PA) 
+QEMUOPTS	 += -device loader,file=./$(TARGET_BIN),addr=$(KERNEL_ENTRY_PA) 
 
 SRCS_ASM = $(shell find ./src -name "*.S")
 SRCS_C = $(shell find ./src -name "*.c")
