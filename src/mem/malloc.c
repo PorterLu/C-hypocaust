@@ -1,6 +1,7 @@
 #include "malloc.h"
-#include "hypervisor.h"
 #include "vm.h"
+#include "string.h"
+#include "print.h"
 
 // free list of malloc_item
 static malloc_item *head;

@@ -35,4 +35,7 @@
 #define HIGH_MINVA (-LOW_MAXVA)
 #define TRAMPOLINE ((uint64_t)0 - PGSIZE)
 
+int mappages(pagetable_t pagetable, uint64_t va, uint64_t size, uint64_t pa, int perm);
+void enable_paging();
+
 #endif

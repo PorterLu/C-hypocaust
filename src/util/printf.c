@@ -1,5 +1,8 @@
-#include "hypervisor.h"
+#include "print.h"
 #include "sbi.h"
+#include "types.h"
+#include "platform.h"
+#include <stdarg.h>
 
 /*
  * ref: https://github.com/cccriscv/mini-riscv-os/blob/master/05-Preemptive/lib.c

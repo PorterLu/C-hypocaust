@@ -1,4 +1,5 @@
-#include "hypervisor.h"
+#include "print.h"
+#include "types.h"
 
 extern uint64_t TEXT_START;
 extern uint64_t TEXT_END;

@@ -1,7 +1,7 @@
 #include "hypervisor.h"
 #include "sbi.h"
-#include "detect.h"
 #include "malloc.h"
+#include "print.h"
 
 extern void page_init(void);
 #include "vm.h"

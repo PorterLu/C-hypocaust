@@ -1,5 +1,5 @@
 #include "vm.h"
-#include "hypervisor.h"
+#include "page.h"
 #include "string.h"
 #include "reg.h"
 #include "platform.h"
@@ -140,13 +140,16 @@ int unmap_single_page(pagetable_t pagetable, uint64_t va) {
   }
 }
 
+extern uint64_t _strampoline;
+
 void enable_paging() {
   pagetable = page_alloc(1);
   mappages(pagetable, TEXT_START, TEXT_END - TEXT_START, TEXT_START, PTE_R | PTE_W | PTE_X);
-  mappages(pagetable, RODATA_START, RODATA_END - RODATA_START, RODATA_START, PTE_R | PTE_W | PTE_X);
-  mappages(pagetable, BSS_START, BSS_END - BSS_START, BSS_START, PTE_R | PTE_W | PTE_X);  
-  mappages(pagetable, UART0, PGSIZE, UART0, PTE_R | PTE_W | PTE_X);
-  mappages(pagetable, BSS_END, HEAP_START + HEAP_SIZE - BSS_END, BSS_END, PTE_R | PTE_W | PTE_X);
+  mappages(pagetable, RODATA_START, RODATA_END - RODATA_START, RODATA_START, PTE_R);
+  mappages(pagetable, BSS_START, BSS_END - BSS_START, BSS_START, PTE_R | PTE_W);  
+  mappages(pagetable, UART0, PGSIZE, UART0, PTE_R | PTE_W);
+  mappages(pagetable, BSS_END, HEAP_START + HEAP_SIZE - BSS_END, BSS_END, PTE_R | PTE_W);
+  mappages(pagetable, TRAMPOLINE, PGSIZE, _strampoline, PTE_R | PTE_X);
   write_csr("satp", ((uint64_t)8 << 60) | (((ppn_t)pagetable >> 12) & 0xfffffffffff));
   asm volatile("sfence.vma");
 }

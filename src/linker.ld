@@ -11,6 +11,7 @@ SECTIONS
   _stext = .;
   .text : {
     *(.text.entry)
+    _strampoline = .;
     *(.text.trampoline)
     . = ALIGN(4K);
     *(.text .text.*)

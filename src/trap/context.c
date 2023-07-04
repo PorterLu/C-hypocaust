@@ -1,4 +1,5 @@
 #include "context.h"
+#include "malloc.h"
 
 TrapContext* init_context(uint64_t entry, reg_t sp, reg_t kernel_satp, reg_t kernel_sp, uint64_t trap_handler) {
   reg_t hstatus = read_csr("hstatus");

@@ -2,7 +2,6 @@
 #include "types.h"
 #include "vm.h"
 #include "reg.h"
-#include "hypervisor.h"
 
 extern uint64_t __alltraps_k;
 extern uint64_t __alltraps;
