@@ -21,22 +21,22 @@ TARGET = $(TARGET_NAME).elf
 TARGET_BIN = $(TARGET_NAME).bin
 
 CROSS_COMPILE = riscv64-unknown-elf-
-CFLGAS = -nostdlib -fno-builtin -march=rv64im -mabi=lp64 -mcmodel=medany -g -Wall -I./include
+CFLAGS = -nostdlib -fno-builtin -march=rv64im -mabi=lp64 -mcmodel=medany -g -Wall -I./include
 CC = $(CROSS_COMPILE)gcc
 OBJCOPY = $(CROSS_COMPILE)objcopy
 OBJDUMP = $(CROSS_COMPILE)objdump
 
 build:$(OBJS)
-	$(CC) $(CFLGAS) -T src/linker.ld -o $(TARGET) $^
+	$(CC) $(CFLAGS) -T src/linker.ld -o $(TARGET) $^
 	$(OBJCOPY) $(TARGET) --strip-all -O binary $(TARGET_BIN)
 
 $(BUILD_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLGAS) -c -o $@ $<
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 $(BUILD_DIR)/%.o: %.S
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLGAS) -c -o $@ $<
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 qemu: build
 	$(QEMU) $(QEMUOPTS)

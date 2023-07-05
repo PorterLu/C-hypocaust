@@ -3,6 +3,9 @@
 #include "malloc.h"
 #include "print.h"
 
+extern uint64_t BSS_START;
+extern uint64_t BSS_END;
+
 extern void page_init(void);
 #include "vm.h"
 
@@ -12,7 +15,6 @@ int main(void) {
     printf("HSM supported\n");
   else 
     panic("HSM not supported");
-  
 
   if(detect_h_extension())
     printf("H extension supported\n");
@@ -20,6 +22,10 @@ int main(void) {
     panic("H extension unsupported");
 
   page_init();
+
+  for(int i = 0; i < (BSS_END - BSS_START)/(sizeof(uint64_t)); i++) {
+    *((uint64_t*)(BSS_START + i)) = 0;
+  }
 
   init_hypervisor();
 
