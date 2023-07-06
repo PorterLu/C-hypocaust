@@ -36,7 +36,5 @@ bool init_elf(const char* buf) {
       memcpy(strtab, (uint8_t*)elf + sh[i].sh_offset, sh[i].sh_size);
     }
   }
-
-  printf("%lx\n", elf);
 }
 

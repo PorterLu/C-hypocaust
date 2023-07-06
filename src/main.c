@@ -47,8 +47,6 @@ int main(void) {
 "              __/ | |",              
 "             |___/|_|"              };
 
-  //printf("%s\n", logo);
-  //printf("%lx\n", logo[1]);
   for(int i = 0; i < 8; i++){
     printf("%s\n",logo[i]);
   }
