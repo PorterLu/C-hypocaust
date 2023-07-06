@@ -56,5 +56,5 @@ SECTIONS
 
   _memory_end = .;
   _heap_start = .;
-  _heap_size = 0x80000000 + 512*1024*1024 - _heap_start - 0x200000;
+  _heap_size = 0x80000000 + 512*1024*1024 - _heap_start;
 }

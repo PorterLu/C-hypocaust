@@ -37,5 +37,6 @@
 
 int mappages(pagetable_t pagetable, uint64_t va, uint64_t size, uint64_t pa, int perm);
 void enable_paging();
+extern pagetable_t pagetable;
 
 #endif

@@ -7,12 +7,13 @@
   ((hdr)->e_ident[0] == 0x7f && (hdr)->e_ident[1] == 'E' && \
    (hdr)->e_ident[2] == 'L'  && (hdr)->e_ident[3] == 'F')
 
+Elf64_Ehdr *elf = NULL;
 char *strtab = NULL;
 Elf64_Sym *symtab = NULL;
 int nr_symtab_entry;
 
 bool init_elf(const char* buf) {
-  Elf64_Ehdr *elf = (void*) buf;
+  elf = (void*) buf;
   if(!IS_ELF(elf))
     panic("ELF error");
   
@@ -35,5 +36,7 @@ bool init_elf(const char* buf) {
       memcpy(strtab, (uint8_t*)elf + sh[i].sh_offset, sh[i].sh_size);
     }
   }
+
+  printf("%lx\n", elf);
 }
 

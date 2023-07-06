@@ -6,6 +6,10 @@
 #define SHT_SYMTAB    2
 #define SHT_STRTAB    3
 #define GUEST_ELF 0x90200000 
+#define PT_LOAD 1
+#define PF_X		(1 << 0)	/* Segment is executable */
+#define PF_W		(1 << 1)	/* Segment is writable */
+#define PF_R		(1 << 2)	/* Segment is readable */
 
 typedef struct {
   uint8_t  e_ident[16];
@@ -57,6 +61,7 @@ typedef struct {
   uint64_t st_size;
 } Elf64_Sym;
 
+extern Elf64_Ehdr *elf;
 extern char *strtab;
 extern Elf64_Sym *symtab;
 extern int nr_symtab_entry;

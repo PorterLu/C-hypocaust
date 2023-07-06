@@ -16,6 +16,8 @@ uint64_t _alloc_start = 0;
 uint64_t _alloc_end = 0;
 uint64_t _num_pages = 0;
 
+void *memset(void *s, int c, size_t n);
+
 #define PAGE_SIZE 4096
 #define PAGE_ORDER 12
 
@@ -110,6 +112,7 @@ void page_free(void *p){
   if(!p || (uint64_t)p >= _alloc_end){            //空页和界限检查
     return;
   }
+  memset(p, 0, PAGE_SIZE);
   struct Page *page = (struct Page*) HEAP_START;
   page += ((uint64_t)p - _alloc_start)/PAGE_SIZE;
   while(!_is_free(page)){                    //循环检查直至最后一个页

@@ -5,6 +5,7 @@
 #include "elf.h"
 #include "vm.h"
 #include "page.h"
+#include "guest.h"
 
 extern uint64_t BSS_START;
 extern uint64_t BSS_END;
@@ -53,7 +54,9 @@ int main(void) {
   }
 
   init_elf((void*)&GUEST_START);
-  
+
+  new_guest_kernel();
+
   printf("Welcome to hypervisor!\n");
 
   panic("over");
