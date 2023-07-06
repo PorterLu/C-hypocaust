@@ -2,12 +2,14 @@
 #include "sbi.h"
 #include "malloc.h"
 #include "print.h"
+#include "elf.h"
+#include "vm.h"
+#include "page.h"
 
 extern uint64_t BSS_START;
 extern uint64_t BSS_END;
-
-extern void page_init(void);
-#include "vm.h"
+extern uint8_t GUEST_START;
+extern uint8_t GUEST_END;
 
 int main(void) {
   sbiret r = SBI_CALL(BASE_EXTENSION, PROBE_EXTENSION, HSM_EXTENSION, 0, 0);
@@ -34,6 +36,24 @@ int main(void) {
   heap_init();
   //heap_test();
 
+  char* logo[8] = 
+  {" _____ _",                          
+"/  __ \\ |",                         
+"| /  \\/ |__  _   _ _ __   ___ _ __" ,
+"| |   | '_ \\| | | | '_ \\ / _ \\ '__|",
+"| \\__/\\ | | | |_| | |_) |  __/ |",   
+" \\____/_| |_|\\__, | .__/ \\___|_|",   
+"              __/ | |",              
+"             |___/|_|"              };
+
+  //printf("%s\n", logo);
+  //printf("%lx\n", logo[1]);
+  for(int i = 0; i < 8; i++){
+    printf("%s\n",logo[i]);
+  }
+
+  init_elf((void*)&GUEST_START);
+  
   printf("Welcome to hypervisor!\n");
 
   panic("over");

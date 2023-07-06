@@ -50,11 +50,6 @@ SECTIONS
     *(.dtb)
   } 
 
-  . = 0x90200000;
-  .initrd : {
-    *(.initrd)
-  }
-
   /DISCARD/ : {
     *(.eh_frame)
   }
