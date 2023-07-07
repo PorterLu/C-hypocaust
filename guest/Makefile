@@ -1,3 +1,5 @@
+.PHONY: build clean
+
 BUILD_DIR = ./build
 
 SRCS_ASM = $(shell find ./ -name "*.S")
@@ -29,4 +31,4 @@ $(BUILD_DIR)/%.o: %.S
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-	@rm ./build -rf
+	-@rm $(TARGET) $(TARGET_BIN) -rf

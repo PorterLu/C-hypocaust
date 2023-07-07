@@ -2,6 +2,7 @@
 #include "types.h"
 #include "vm.h"
 #include "reg.h"
+#include "print.h"
 
 extern uint64_t __alltraps_k;
 extern uint64_t __alltraps;
@@ -28,4 +29,11 @@ void trap_from_kernel(TrapContext *ctx) {
     
   //}
   panic("trap from kernel");
+}
+
+void trap_handler() {
+  TrapContext *ctx = (TrapContext*)(TRAMPOLINE - PGSIZE);
+  reg_t scause = read_csr("scause");
+  printf("trap handler sepc: %lx, scause,", ctx->sepc, scause);
+  panic("exit");
 }

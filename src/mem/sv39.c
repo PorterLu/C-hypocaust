@@ -149,6 +149,7 @@ void enable_paging() {
   mappages(pagetable, BSS_START, BSS_END - BSS_START, BSS_START, PTE_R | PTE_W);  
   mappages(pagetable, UART0, PGSIZE, UART0, PTE_R | PTE_W);
   mappages(pagetable, BSS_END, HEAP_START + HEAP_SIZE - BSS_END, BSS_END, PTE_R | PTE_W);
+  mappages(pagetable, TRAMPOLINE - PGSIZE, PGSIZE, page_alloc(1), PTE_R | PTE_X);
   mappages(pagetable, TRAMPOLINE, PGSIZE, _strampoline, PTE_R | PTE_X);
   write_csr("satp", ((uint64_t)8 << 60) | (((ppn_t)pagetable >> 12) & 0xfffffffffff));
   asm volatile("sfence.vma");

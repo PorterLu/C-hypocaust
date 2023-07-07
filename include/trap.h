@@ -10,4 +10,6 @@ void trap_return();
 
 void trap_from_kernel(TrapContext *ctx);
 
+void trap_handler();
+
 #endif

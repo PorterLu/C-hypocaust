@@ -1,13 +1,21 @@
 #include "types.h"
 #include "elf.h"
-#include "vm.h"
 #include "page.h"
 #include "string.h"
 #include "platform.h"
+#include "reg.h"
+#include "context.h"
+#include "trap.h"
+#include "guest.h" 
 
 #define GUEST_START_HPA 0x88000000
 #define GUEST_START_GVA 0x80000000
 #define GUEST_SIZE 0x200000
+#define STACK_SIZE 0x8000
+
+static global_vmid;
+VMB global_vmb_list[10];
+
 pagetable_t new_guest_kernel() {
   uint16_t ph_count = elf->e_phnum;
   Elf64_Phdr *ph = NULL;
@@ -33,21 +41,88 @@ pagetable_t new_guest_kernel() {
       if(ph->p_flags & PF_X != 0) {
         perm |= PTE_X;
       }
-      mappages(guest_pt, p_vaddr, PGROUNDUP(p_memsz),  PGROUNDDOWN(inner_offset + GUEST_START_HPA), perm | PTE_V);
+      mappages(guest_pt, p_vaddr, PGROUNDUP(p_memsz),  PGROUNDDOWN(inner_offset + GUEST_START_HPA), perm);
       perm = 0;
       if(inner_offset + p_memsz > last_offset) {
         last_offset = inner_offset + p_memsz;
       }
     }
   }
-  mappages(guest_pt, PGROUNDUP(GUEST_START_GVA + last_offset) , GUEST_SIZE - last_offset, GUEST_START_HPA + last_offset, PTE_V);
+  mappages(guest_pt, PGROUNDUP(GUEST_START_GVA + last_offset) , GUEST_SIZE - last_offset, GUEST_START_HPA + last_offset, 0);
+  global_vmb_list[global_vmid].vmid = global_vmid;
+  global_vmb_list[global_vmid].pt = guest_pt;
+  global_vmid ++;
   return guest_pt;
 }
 
 extern uint64_t _strampoline;
+extern uint64_t __restore;
+extern uint64_t __alltraps;
 
 void initialize_gpm(pagetable_t pt) {
   mappages(pt, TRAMPOLINE, PGSIZE, _strampoline, PTE_R | PTE_X);
   mappages(pt, TRAMPOLINE - PGSIZE, PGSIZE, page_alloc(1), PTE_R | PTE_X);
   mappages(pt, UART0, PGSIZE, UART0, PTE_R | PTE_W);
+}
+
+// set the new addr of __restore asm function in TRAMPOLINE page,
+// set the reg a0 = trap_cx_ptr, reg a1 = phy addr of usr page table,
+// finally, jump to new addr of __restore asm function
+void switch_to_guest() {
+  set_user_trap_entry();
+  TrapContext* ctx = (TrapContext*)(TRAMPOLINE - PGSIZE);
+  // guest physical address translation
+  if(read_csr("hgatp") != ctx->hgatp) {
+    write_csr("hgatp", ctx->hgatp);
+    /*
+    * rs1 = zero
+    * rs2 = zero
+    * HFENCE.GVMA
+    * 0110001 00000 00000 000 00000 1110011
+    */
+    asm volatile (".word 0x62000073" ::: "memory");
+  }
+
+  write_csr("hstatus", read_csr("hstatus") | HSTATUS_SPV);
+  write_csr("sstatus", read_csr("sstatus") | SSTATUS_SPP);
+
+  uint64_t restore_va = __restore - __alltraps + TRAMPOLINE;
+
+  register uintptr_t a0 asm("a0") = TRAMPOLINE - PGSIZE;
+  register uintptr_t a1 asm("a1") = ctx->hgatp;
+
+  asm volatile(
+    "fence.i;" \
+    "jr %0" ::"r"(restore_va):
+  );
+}
+
+uint64_t hstack_position(uint64_t guest_id) {
+  uint64_t top = TRAMPOLINE - PGSIZE - guest_id * (STACK_SIZE + PGSIZE);
+  return top;
+}
+
+uint64_t hstack_alloc(uint64_t guest_id) {
+  uint64_t top = hstack_position(guest_id);
+  mappages(pagetable, top - STACK_SIZE, PGSIZE, page_alloc(2), PTE_R | PTE_W);
+  TrapContext *ctx = (TrapContext*)(TRAMPOLINE - PGSIZE);
+  TrapContext* tmp = init_context(
+    GUEST_START_GVA,
+    0,
+    global_vmb_list[guest_id].pt,
+    top,
+    trap_handler
+  );
+  memcpy(ctx, tmp, PGSIZE);
+  page_free(tmp);
+}
+
+void hentry() {  
+  pagetable_t *pt = new_guest_kernel();
+  asm volatile("csrw satp, %0;" \
+    "sfence.vma"::"r"(pt):
+  );
+  set_kernel_trap_entry();
+  initialize_gpm(pt);
+  switch_to_guest();
 }

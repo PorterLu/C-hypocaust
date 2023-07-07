@@ -26,7 +26,7 @@
 #define HSTATUS_SPV (1 << 7)
 #define HSTATUS_SPVP (1 << 8)
 
-struct context {
+typedef struct context {
   reg_t zero;
   reg_t ra;
   reg_t sp;
@@ -65,7 +65,7 @@ struct context {
   reg_t sepc;
   reg_t scause;
   reg_t stval;
-};
+} context;
 
 #define write_csr(csr_name, write_data)   ({                \
   asm volatile("csrw " csr_name ", %0"::"r"(write_data));    \

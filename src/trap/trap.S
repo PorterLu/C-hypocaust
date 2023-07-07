@@ -38,16 +38,14 @@ __alltraps:
   ld t1, 36*8(sp)
   # move kernel sp
   ld sp, 35*8(sp)
-  # move to kernel space
-  csrw hgatp, t0
-  sfence.vma
+  # let VS guest switch to HS Hypervisor
   jr t1
 
 __restore:
+  # At this moment, we don't have to change page table, as we are still
+  # in HS mode and use satp to translate address
   # a0: *TrapContext in user Space(constant); a1: userspace token
   # switch to user space
-  csrw hgatp, a1
-  sfence.vma
   csrw sscratch, a0
   mv sp, a0
   # new sp points to TrapContext in user space

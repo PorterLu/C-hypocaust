@@ -57,6 +57,8 @@ int main(void) {
 
   printf("Welcome to hypervisor!\n");
 
+  hentry();
+  
   panic("over");
 
   return 0;
