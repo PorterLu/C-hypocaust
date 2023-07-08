@@ -28,3 +28,13 @@ BSS_START: .dword _sbss
 
 .global BSS_END
 BSS_END: .dword _ebss
+
+.global STRAMPOLINE 
+STRAMPOLINE: .dword _strampoline
+
+.global ALLTRAPS 
+ALLTRAPS: .dword __alltraps 
+
+.global RESTORE 
+RESTORE: .dword __restore
+

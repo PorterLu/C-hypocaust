@@ -9,7 +9,7 @@ typedef struct VMB {
   pagetable_t pt;
 } VMB;
 
-pagetable_t new_guest_kernel();
+uint64_t new_guest_kernel();
 void hentry();
 void initialize_gpm(pagetable_t pt);
 

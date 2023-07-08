@@ -18,10 +18,10 @@ void *memmove(void *dst, const void *src, size_t n) {
   //firstly, we copy the source to tmp array
   for(i = 0; i < n; i++)
     tmp[i] = *((char*) src + i);
-
   //then we move data to destination
-  for(i = 0; i < n; i++)
-      *((char*) dst + i) = tmp[i];
+  for(i = 0; i < n; i++){
+    *((char*) dst + i) = tmp[i];
+  }
 
   page_free(tmp);
   return dst;

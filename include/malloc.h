@@ -5,6 +5,7 @@
 
 #define MALLOC_ITEM_SIZE  512
 #define TOTAL_ITEM_NUM 1024
+#define MALLOC_CONTENT_SIZE (MALLOC_ITEM_SIZE - sizeof(uintptr_t)*2)
 
 typedef struct malloc_item {
   void *item;
@@ -13,7 +14,7 @@ typedef struct malloc_item {
 } malloc_item;
 
 void heap_init();
-bool malloc();
+uint8_t* malloc();
 bool free(void* addr);
 void heap_test();
 

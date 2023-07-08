@@ -34,7 +34,7 @@ void heap_init() {
 }
 
 // find an item in free list, add it into applied list
-bool malloc() {
+uint8_t* malloc() {
   if(head) {
     if(occupied_head == NULL) {
       occupied_head = occupied_tail = head;
@@ -46,9 +46,9 @@ bool malloc() {
       occupied_tail = occupied_tail->next;
       occupied_tail->next = NULL;
     }
-    return true;
+    return occupied_tail;
   } 
-  return false;
+  return NULL;
 }
 
 // free an item, add it into free list

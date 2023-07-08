@@ -7,16 +7,18 @@
 #include "context.h"
 #include "trap.h"
 #include "guest.h" 
+#include "malloc.h"
+#include "print.h"
 
 #define GUEST_START_HPA 0x88000000
 #define GUEST_START_GVA 0x80000000
 #define GUEST_SIZE 0x200000
-#define STACK_SIZE 0x8000
+#define STACK_SIZE 0x2000
 
 static global_vmid;
 VMB global_vmb_list[10];
 
-pagetable_t new_guest_kernel() {
+uint64_t new_guest_kernel() {
   uint16_t ph_count = elf->e_phnum;
   Elf64_Phdr *ph = NULL;
   pagetable_t guest_pt = page_alloc(1);
@@ -49,18 +51,19 @@ pagetable_t new_guest_kernel() {
     }
   }
   mappages(guest_pt, PGROUNDUP(GUEST_START_GVA + last_offset) , GUEST_SIZE - last_offset, GUEST_START_HPA + last_offset, 0);
-  global_vmb_list[global_vmid].vmid = global_vmid;
-  global_vmb_list[global_vmid].pt = guest_pt;
+  uint64_t vmid = global_vmid;
+  global_vmb_list[vmid].vmid = vmid;
+  global_vmb_list[vmid].pt = guest_pt;
   global_vmid ++;
-  return guest_pt;
+  return vmid;
 }
 
-extern uint64_t _strampoline;
-extern uint64_t __restore;
-extern uint64_t __alltraps;
+extern uint64_t STRAMPOLINE;
+extern uint64_t ALLTRAPS;
+extern uint64_t RESTORE;
 
 void initialize_gpm(pagetable_t pt) {
-  mappages(pt, TRAMPOLINE, PGSIZE, _strampoline, PTE_R | PTE_X);
+  mappages(pt, TRAMPOLINE, PGSIZE, STRAMPOLINE, PTE_R | PTE_X);
   mappages(pt, TRAMPOLINE - PGSIZE, PGSIZE, page_alloc(1), PTE_R | PTE_X);
   mappages(pt, UART0, PGSIZE, UART0, PTE_R | PTE_W);
 }
@@ -86,7 +89,8 @@ void switch_to_guest() {
   write_csr("hstatus", read_csr("hstatus") | HSTATUS_SPV);
   write_csr("sstatus", read_csr("sstatus") | SSTATUS_SPP);
 
-  uint64_t restore_va = __restore - __alltraps + TRAMPOLINE;
+  printf("%lx\n%lx\n", ALLTRAPS, RESTORE);
+  uint64_t restore_va = RESTORE - ALLTRAPS + TRAMPOLINE;
 
   register uintptr_t a0 asm("a0") = TRAMPOLINE - PGSIZE;
   register uintptr_t a1 asm("a1") = ctx->hgatp;
@@ -98,31 +102,37 @@ void switch_to_guest() {
 }
 
 uint64_t hstack_position(uint64_t guest_id) {
-  uint64_t top = TRAMPOLINE - PGSIZE - guest_id * (STACK_SIZE + PGSIZE);
+  uint64_t bottom = TRAMPOLINE - PGSIZE - guest_id * (STACK_SIZE + PGSIZE);
+  uint64_t top = bottom - STACK_SIZE;
   return top;
 }
 
-uint64_t hstack_alloc(uint64_t guest_id) {
+void hstack_alloc(uint64_t guest_id) {
   uint64_t top = hstack_position(guest_id);
-  mappages(pagetable, top - STACK_SIZE, PGSIZE, page_alloc(2), PTE_R | PTE_W);
+  mappages(pagetable, top, STACK_SIZE, page_alloc(2), PTE_R | PTE_W);
+  mappages(global_vmb_list[guest_id].pt, top, STACK_SIZE, page_alloc(2), PTE_R | PTE_W);
   TrapContext *ctx = (TrapContext*)(TRAMPOLINE - PGSIZE);
-  TrapContext* tmp = init_context(
+  TrapContext *tmp = init_context(
     GUEST_START_GVA,
     0,
     global_vmb_list[guest_id].pt,
     top,
     trap_handler
   );
-  memcpy(ctx, tmp, PGSIZE);
+  memcpy(ctx, tmp, MALLOC_CONTENT_SIZE);
   page_free(tmp);
 }
 
 void hentry() {  
-  pagetable_t *pt = new_guest_kernel();
-  asm volatile("csrw satp, %0;" \
+  uint64_t vmid = new_guest_kernel();
+  pagetable_t pt = global_vmb_list[vmid].pt;
+  /*asm volatile("csrw satp, %0;" \
     "sfence.vma"::"r"(pt):
-  );
+  );*/
   set_kernel_trap_entry();
   initialize_gpm(pt);
+  printf("initialize gpm over\n");
+  hstack_alloc(0);
+  printf("hstack alloc over\n");
   switch_to_guest();
 }

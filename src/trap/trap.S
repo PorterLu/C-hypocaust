@@ -12,7 +12,7 @@
   .global __restore
   .global __alltraps_k
   .global __restore_k
-  .align 2
+  .align 12
 __alltraps:
   csrrw sp, sscratch, sp
   # now sp points to *TrapContext in user space, sscratch points to user stack

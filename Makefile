@@ -26,7 +26,7 @@ CC = $(CROSS_COMPILE)gcc
 OBJCOPY = $(CROSS_COMPILE)objcopy
 OBJDUMP = $(CROSS_COMPILE)objdump
 
-.PHONY: build clean qem
+.PHONY: build clean qemu
 
 build: $(OBJS)
 	$(CC) $(CFLAGS) -T src/linker.ld -o $(TARGET) $^

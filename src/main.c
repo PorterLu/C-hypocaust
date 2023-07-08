@@ -53,8 +53,6 @@ int main(void) {
 
   init_elf((void*)&GUEST_START);
 
-  new_guest_kernel();
-
   printf("Welcome to hypervisor!\n");
 
   hentry();
