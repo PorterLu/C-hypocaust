@@ -17,11 +17,20 @@
 
 static global_vmid;
 VMB global_vmb_list[10];
+pagetable_t padding, tmp;
 
 uint64_t new_guest_kernel() {
   uint16_t ph_count = elf->e_phnum;
   Elf64_Phdr *ph = NULL;
-  pagetable_t guest_pt = page_alloc(1);
+  pagetable_t guest_pt = page_alloc(4);
+  if(((uint64_t)guest_pt) % 0x4000 != 0) {
+    uint64_t remained = (((uint64_t)guest_pt) % 0x4000) / 0x1000;
+    padding = page_alloc(remained);
+    tmp = page_alloc(4);
+    page_free(guest_pt);
+    guest_pt = tmp;
+    free(padding);
+  }
   int perm = 0;
   uint64_t last_offset = 0;
   for(int i = 0; i < ph_count; i++) {
@@ -75,8 +84,9 @@ void switch_to_guest() {
   set_user_trap_entry();
   TrapContext* ctx = (TrapContext*)(TRAMPOLINE - PGSIZE);
   // guest physical address translation
-  if(read_csr("hgatp") != ctx->hgatp) {
-    write_csr("hgatp", ctx->hgatp);
+  uint64_t hgatp_content = ctx->hgatp;
+  if(read_csr("hgatp") != hgatp_content) {
+    write_csr("hgatp", hgatp_content);
     /*
     * rs1 = zero
     * rs2 = zero
@@ -89,7 +99,6 @@ void switch_to_guest() {
   write_csr("hstatus", read_csr("hstatus") | HSTATUS_SPV);
   write_csr("sstatus", read_csr("sstatus") | SSTATUS_SPP);
 
-  printf("%lx\n%lx\n", ALLTRAPS, RESTORE);
   uint64_t restore_va = RESTORE - ALLTRAPS + TRAMPOLINE;
 
   register uintptr_t a0 asm("a0") = TRAMPOLINE - PGSIZE;
@@ -115,7 +124,7 @@ void hstack_alloc(uint64_t guest_id) {
   TrapContext *tmp = init_context(
     GUEST_START_GVA,
     0,
-    global_vmb_list[guest_id].pt,
+    ((uint64_t)8 << 60) | ((((ppn_t)(global_vmb_list[guest_id].pt)) >> 12) & 0xfffffffffff),
     top,
     trap_handler
   );
