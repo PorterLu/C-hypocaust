@@ -26,39 +26,39 @@ void write_hideleg(reg_t value) {
 
 // Instruction address misaligned
 void set_hinst_misaligned() {
-  write_hedeleg(read_hedeleg() | 1);
+  write_hedeleg(read_hedeleg() | INST_ADDR_MISALIGN);
 }
 // breakpoint
 void set_hbreak() {
-  write_hedeleg(read_hedeleg() | (1 << 3));
+  write_hedeleg(read_hedeleg() | BREAKPOINT);
 }
 // Environment call from U-mode or VU-mode 
 void set_hecall_from_u() {
-  write_hedeleg(read_hedeleg() | (1 << 8));
+  write_hedeleg(read_hedeleg() | ENV_CALL_FROM_U_OR_VU);
 }
 // Instruction page fault
 void set_hinst_page() {
-  write_hedeleg(read_hedeleg() | (1 << 12));
+  write_hedeleg(read_hedeleg() | INST_PAGE_FAULT);
 } 
 // Load page fault 
 void set_hload_page() {
-  write_hedeleg(read_hedeleg() | (1 << 13));
+  write_hedeleg(read_hedeleg() | LOAD_PAGE_FAULT);
 }
 // Store/AMO page fault 
 void set_hstore_page() {
-  write_hedeleg(read_hedeleg() | (1 << 14));
+  write_hedeleg(read_hedeleg() | STORE_PAGE_FAULT);
 }
 // hideleg: delegate all interrupts
 void set_hexternal_int() {
-  write_hideleg(read_hideleg() | (1 << 10));
+  write_hideleg(read_hideleg() | VSEIP);
 }
 
 void set_hsoft_int() {
-  write_hideleg(read_hideleg() | (1 << 2));
+  write_hideleg(read_hideleg() | VSSIP);
 }
 
-void clear_htime_int() {
-  write_hideleg(read_hideleg() & ~(1 << 6));
+void set_htime_int() {
+  write_hideleg(read_hideleg() | VSTIP);
 }
 
 // hvip: clear all interrupts
@@ -75,13 +75,13 @@ void trap_test() {
 void init_hypervisor() {
   set_hinst_misaligned();
   set_hbreak();
-  set_hecall_from_u();
+  //set_hecall_from_u();
   set_hinst_page();
   set_hload_page();
   set_hstore_page();
   set_hexternal_int();
   set_hsoft_int();
-  clear_htime_int();
+  set_htime_int();
   clear_hvip_all();
 
   write_csr("stvec", (uint64_t) trap_test & 0xc0);

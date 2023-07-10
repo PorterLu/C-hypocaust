@@ -25,6 +25,7 @@ CFLAGS = -nostdlib -fno-builtin -march=rv64g -mabi=lp64 -mcmodel=medany -g -Wall
 CC = $(CROSS_COMPILE)gcc
 OBJCOPY = $(CROSS_COMPILE)objcopy
 OBJDUMP = $(CROSS_COMPILE)objdump
+GDB = gdb-multiarch
 
 .PHONY: build clean qemu
 
@@ -45,7 +46,11 @@ qemu: build
 	$(QEMU) $(QEMUOPTS)
 	
 debug: build
-	$(QEMU) $(QEMUOPTS) -s -S
+	#$(QEMU) $(QEMUOPTS) -s -S
+	@tmux new-session -d \
+        "$(QEMU) $(QEMUOPTS) -s -S" && \
+        tmux split-window -h "$(GDB) -ex 'file $(TARGET)' -ex 'set arch riscv:rv64' -ex 'target remote localhost:1234'" && \
+        tmux -2 attach-session -d
 
 clean:
 	-@rm $(BUILD_DIR) -rf

@@ -26,6 +26,30 @@
 #define HSTATUS_SPV (1 << 7)
 #define HSTATUS_SPVP (1 << 8)
 
+#define INST_ADDR_MISALIGN (1 << 0)
+#define INST_ACCESSS_FAULT  (1 << 1)
+#define ILLEGAL_INST  (1 << 2)
+#define BREAKPOINT  (1 << 3)
+#define LOAD_ADDR_MISALIGNED  (1 << 4)
+#define LOAD_ACCESS_FAULT  (1 << 5)
+#define STORE_ADDR_MISALIGNED  (1 << 6)
+#define STORE_ACCESS_FAULT  (1 << 7)
+#define ENV_CALL_FROM_U_OR_VU  (1 << 8)
+#define ENV_CALL_FROM_HS  (1 << 9)
+#define ENV_CALL_FROM_VS  (1 << 10)
+#define ENV_CALL_FROM_M  (1 << 11)
+#define INST_PAGE_FAULT  (1 << 12)
+#define LOAD_PAGE_FAULT  (1 << 13)
+#define STORE_PAGE_FAULT  (1 << 15)
+#define INST_GUEST_PAGE_FAULT  (1 << 20)
+#define LOAD_GUEST_PAGE_FAULT  (1 << 21)
+#define VIRTUAL_INST  (1 << 22)
+#define STORE_GUEST_PAGE_FAULT  (1 << 23)
+
+#define VSSIP (1 << 2)
+#define VSTIP (1 << 6)
+#define VSEIP (1 << 10)
+
 typedef struct context {
   reg_t zero;
   reg_t ra;

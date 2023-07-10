@@ -36,5 +36,10 @@ bool init_elf(const char* buf) {
       memcpy(strtab, (uint8_t*)elf + sh[i].sh_offset, sh[i].sh_size);
     }
   }
+
+  /*printf("Guest ELF:\n");
+  for(int i = 0; i < nr_symtab_entry; i++) {
+    printf("%s\n", &strtab[symtab[i].st_name]);
+  }*/
 }
 
